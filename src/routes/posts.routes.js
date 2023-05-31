@@ -11,8 +11,9 @@ import {
   dislikePost,
   likePost,
 } from "../controllers/posts.controllers.js"
+import { authMiddleware } from "../middlewares/auth.middleware.js"
 
-postsRouter = Router()
+const postsRouter = Router()
 
 postsRouter.post(
   "/users/:id/posts",
@@ -22,7 +23,12 @@ postsRouter.post(
   createPost
 )
 
-postsRouter.post("/posts/:id/like", checkExistingPost, likePost)
-postsRouter.post("/posts/:id/dislike", checkExistingPost, dislikePost)
+postsRouter.post("/posts/:id/like", authMiddleware, checkExistingPost, likePost)
+postsRouter.post(
+  "/posts/:id/dislike",
+  authMiddleware,
+  checkExistingPost,
+  dislikePost
+)
 
 export default postsRouter

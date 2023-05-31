@@ -1,4 +1,4 @@
-import { db } from "../database/db.connection.js"
+import db from "../database/db.connection.js"
 
 export function createPostDB(description, postUrl, userId) {
   return db.query(
