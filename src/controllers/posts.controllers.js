@@ -25,9 +25,9 @@ export async function createPost(req, res) {
 
 export async function likePost(req, res) {
   const { id } = req.params
-
+  const userId = req.session
   try {
-    await dbLikePost(id, userId) //ainda nao tem acesso ao userID(fazer middlewara authValidation para pegar)
+    await dbLikePost(id, userId.userId) 
     res.send("Post liked")
   } catch (err) {
     res.status(500).send(err.message)
@@ -36,9 +36,9 @@ export async function likePost(req, res) {
 
 export async function dislikePost(req, res) {
   const { id } = req.params
-
+  const userId = req.session
   try {
-    await dbDislikePost(id, userId) //ainda nao tem acesso ao userID(fazer middlewara authValidation para pegar)
+    await dbDislikePost(id, userId.userId) 
     res.send("Post disliked")
   } catch (err) {
     res.status(500).send(err.message)
