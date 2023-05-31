@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, getUserById, getUserByEmail } from "../repository/auth.repository.js";
+import {
+  createUser,
+  getUserById,
+  getUserByEmail,
+} from "../repository/auth.repository.js";
 import {
   createSession,
   getSessionByToken,
@@ -16,7 +20,6 @@ export async function signUp(req, res) {
     if (rows.length > 0) {
       return res.status(409).json({ error: "User already exists" });
     }
-      
 
     await createUser(req.body);
 
@@ -79,6 +82,27 @@ export async function getUser(req, res) {
     }
 
     const user = await getUserById(session.user_id);
+
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export async function getUserByParams(req, res) {
+  const { id } = req.params;
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+
+    const session = await getSessionByToken(token);
+
+    if (!session) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const user = await getUserById(id);
 
     return res.status(200).json({ user });
   } catch (err) {
