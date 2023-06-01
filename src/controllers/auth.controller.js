@@ -4,7 +4,7 @@ import {
   createUser,
   getUserById,
   getUserByEmail,
-} from "../repository/auth.repository.js";
+} from "../repository/users.repositories.js";
 import {
   createSession,
   deleteSession,
@@ -105,7 +105,7 @@ export async function getUserByParams(req, res) {
 
     const user = await getUserById(id);
 
-    return res.status(200).send({ user });
+    return res.status(200).send(user.rows[0]);
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Internal server error" });
