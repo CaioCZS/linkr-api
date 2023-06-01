@@ -1,6 +1,6 @@
-import fetch from "node-fetch"
-import { getUserById } from "../repository/users.repositories.js"
-import { dbGetPostById } from "../repository/posts.repositories.js"
+import fetch from "node-fetch";
+import { getUserById } from "../repository/users.repositories.js";
+import { getUserPostById } from "../repository/posts.repositories.js";
 export async function checkIfUrlIsAvailable(req, res, next) {
   const { postUrl } = req.body
 
@@ -35,9 +35,31 @@ export async function checkExistingPost(req, res, next) {
   if (!id) return res.status(404).send("Post not found!")
 
   try {
-    const post = await dbGetPostById(id)
+    const post = await getUserPostById(id)
     if (post.rowCount === 0) return res.status(404).send("Post not found!")
     next()
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
+}
+
+export async function checkExistingPostForUpdate(req, res, next) {
+  const { postId } = req.params;
+  try{
+    const post = await getUserPostById (postId);
+    if (post.rowCount === 0) return res.status(404).send("Post not found!");
+    res.locals.post = post;
+    next();
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
+}
+
+export async function checkIfUserIsPostsOwner(req, res, next) {
+  const {post} = res.locals;
+  try{
+    if (post.rows[0].userId !== userId) return res.status(401).send("This user is not this post owner!");
+    next();
   } catch (err) {
     return res.status(500).send(err.message)
   }

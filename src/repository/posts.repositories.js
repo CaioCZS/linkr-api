@@ -14,10 +14,18 @@ export function getPostByPostUrlAndUserId(postUrl, userId) {
   )
 }
 
-export function dbGetPostById(id) {
-  const post = db.query(`SELECT * FROM posts WHERE id=$1`, [id])
-  return post
+export function getAllUsersPostsDB(){
+  return db.query(`SELECT * FROM posts ORDER BY "createdAt" DESC LIMIT 20;`);
 }
+
+export function getUserPostById (postId) {
+  return db.query(`SELECT * FROM posts WHERE id=$1;`, [postId]);
+}
+
+export function updateUserPostDB (description, userId, postId){
+  return db.query(`UPDATE posts SET description=$1 WHERE id=$2 AND "userId"=$3;`, [description, postId, userId]);
+}
+
 
 export function dbLikePost(postId, likerId) {
   return db.query(`INSERT INTO likes ("postId","likerId") VALUES ($1,$2)`, [
