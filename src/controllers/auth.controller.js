@@ -18,15 +18,15 @@ export async function signUp(req, res) {
     const { rows } = await getUserByEmail(email);
 
     if (rows.length > 0) {
-      return res.status(409).json({ error: "User already exists" });
+      return res.status(409).send({ error: "User already exists" });
     }
 
     await createUser(req.body);
 
-    return res.status(201).json({ message: "User created successfully" });
+    return res.status(201).send({ message: "User created successfully" });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
 
@@ -38,23 +38,23 @@ export async function signIn(req, res) {
     const { rows } = await getUserByEmail(email);
 
     if (rows.length === 0) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).send({ error: "Invalid email or password" });
     }
 
     const user = rows[0];
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).send({ error: "Invalid email or password" });
     }
 
     const token = jwt.sign({ userId: user.id }, key);
 
     await createSession(user.id, token);
 
-    return res.status(200).json({ token });
+    return res.status(200).send({ token });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
 
@@ -64,10 +64,10 @@ export async function signOut(req, res) {
 
     await deleteSession(token);
 
-    return res.status(200).json({ message: "Logged out successfully" });
+    return res.status(200).send({ message: "Logged out successfully" });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
 
@@ -78,15 +78,15 @@ export async function getUser(req, res) {
     const session = await getSessionByToken(token);
 
     if (!session) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).send({ error: "Invalid token" });
     }
 
     const user = await getUserById(session.user_id);
 
-    return res.status(200).json({ user });
+    return res.status(200).send({ user });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
 
@@ -99,14 +99,14 @@ export async function getUserByParams(req, res) {
     const session = await getSessionByToken(token);
 
     if (!session) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).send({ error: "Invalid token" });
     }
 
     const user = await getUserById(id);
 
-    return res.status(200).json({ user });
+    return res.status(200).send({ user });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
