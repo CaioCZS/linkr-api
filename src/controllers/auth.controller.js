@@ -7,6 +7,7 @@ import {
 } from "../repository/auth.repository.js";
 import {
   createSession,
+  deleteSession,
   getSessionByToken,
 } from "../repository/session.repository.js";
 
@@ -109,4 +110,15 @@ export async function getUserByParams(req, res) {
     console.error(err);
     return res.status(500).send({ error: "Internal server error" });
   }
+}
+
+export async function logoutSession(req, res) {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    await deleteSession(token);
+    return res.status(200).send({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ error: "Internal server error" });
+  } 
 }
