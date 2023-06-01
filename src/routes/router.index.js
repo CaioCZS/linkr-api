@@ -1,5 +1,5 @@
 import express from "express"
-import authRoute from "./auth.route.js"
+import authRoute from "./auth.routes.js"
 import hashtagRouter from "./hashtags.routes.js"
 import postsRouter from "./posts.routes.js"
 
