@@ -1,6 +1,5 @@
 import {createPostDB, dbDislikePost, dbLikePost, getAllUsersPostsDB, 
-getPostByPostUrlAndUserId,
-updateUserPostDB} from "../repository/posts.repositories.js";
+getPostByPostUrlAndUserId, updateUserPostDB} from "../repository/posts.repositories.js";
 
 export async function createPost(req, res) {
   const { id } = req.params;
@@ -30,21 +29,34 @@ export async function getAllUsersPosts (req, res) {
 }
 
 export async function updateUserPost (req,res) {
-    const {postId, userId} = req.params;
+    const {id} = req.params;
     const {description} = req.body;
+    const {session} = res.locals;
+    const {userId} = session;
     try {
-        await updateUserPostDB (description, userId, postId);
+        await updateUserPostDB (description, userId, id);
         return res.send("Post updated!");
       } catch (err) {
         res.status(500).send(err.message)
       }
     
 }
+
+export async function deleteUserPost (req,res) {
+  const { id } = req.params;
+  try {
+    await deletePost(id); 
+    res.send("Post deleted!");
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
 export async function likePost(req, res) {
   const { id } = req.params
-  const userId = req.session
+  const {session} = res.locals
+  const {userId} = session
   try {
-    await dbLikePost(id, userId.userId) 
+    await dbLikePost(id, userId) 
     res.send("Post liked")
   } catch (err) {
     res.status(500).send(err.message)
@@ -53,9 +65,10 @@ export async function likePost(req, res) {
 
 export async function dislikePost(req, res) {
   const { id } = req.params
-  const userId = req.session
+  const {session} = res.locals
+  const {userId} = session
   try {
-    await dbDislikePost(id, userId.userId) 
+    await dbDislikePost(id, userId) 
     res.send("Post disliked")
   } catch (err) {
     res.status(500).send(err.message)

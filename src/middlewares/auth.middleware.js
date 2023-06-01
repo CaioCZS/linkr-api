@@ -19,7 +19,7 @@ export async function authMiddleware(req, res, next) {
     if (!session) {
       return res.status(401).send({ error: "Unauthorized" })
     }
-
+    res.locals.session = session
     next()
   } catch (err) {
     console.error(err)
