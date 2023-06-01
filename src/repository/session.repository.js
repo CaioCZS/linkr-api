@@ -17,7 +17,7 @@ export async function getSessionByToken(token) {
     const result = await db.query(`SELECT * FROM sessions WHERE token = $1;`, [
       token,
     ]);
-    
+
     return result.rows[0];
   } catch (err) {
     console.log(err);
@@ -27,9 +27,7 @@ export async function getSessionByToken(token) {
 
 export async function deleteSession(token) {
   try {
-    await db.query(`DELETE FROM sessions WHERE token = $1;`, [
-      token,
-    ]);
+    await db.query(`DELETE FROM sessions WHERE token = $1;`, [token]);
   } catch (err) {
     console.error(err);
     throw new Error("Error deleting session");
