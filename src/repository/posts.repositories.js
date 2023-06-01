@@ -26,7 +26,9 @@ export function updateUserPostDB (description, userId, postId){
   return db.query(`UPDATE posts SET description=$1 WHERE id=$2 AND "userId"=$3;`, [description, postId, userId]);
 }
 
-
+export function deletePost(postId) {
+  return db.query(`DELETE FROM posts WHERE id=$1;`, [postId]);
+}
 export function dbLikePost(postId, likerId) {
   return db.query(`INSERT INTO likes ("postId","likerId") VALUES ($1,$2)`, [
     postId,
