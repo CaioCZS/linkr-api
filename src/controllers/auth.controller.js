@@ -52,7 +52,7 @@ export async function signIn(req, res) {
 
     await createSession(user.id, token);
 
-    return res.status(200).send({ token });
+    return res.status(200).send({ token, user });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Internal server error" });
