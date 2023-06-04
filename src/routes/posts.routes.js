@@ -47,6 +47,6 @@ postsRouter.delete(
 )
 postsRouter.post("/posts/:id/like", checkExistingPost, likePost)
 postsRouter.post("/posts/:id/dislike", checkExistingPost, dislikePost)
-postsRouter.get("/posts/:hashtag", getPostsByHashtag)
+postsRouter.get("/posts/hashtag/:hashtag", getPostsByHashtag)
 
 export default postsRouter
