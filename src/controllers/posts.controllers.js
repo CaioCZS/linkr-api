@@ -29,7 +29,7 @@ export async function createPost(req, res) {
 export async function getAllUsersPosts(req, res) {
   try {
     const posts = await getAllUsersPostsDB()
-    return res.send(posts.rows[0])
+    return res.send(posts.rows)
   } catch (err) {
     return res.status(500).send(err.message)
   }
