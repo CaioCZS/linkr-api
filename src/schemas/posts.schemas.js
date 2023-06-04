@@ -1,7 +1,7 @@
 import joi from "joi";
 
 export const createPostSchema = joi.object({
-    description: joi.string(),
+    description: joi.string().allow(null, ''),
     postUrl: joi.string().uri().required()
 })
 

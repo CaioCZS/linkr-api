@@ -15,7 +15,28 @@ export function getPostByPostUrlAndUserId(postUrl, userId) {
 }
 
 export function getAllUsersPostsDB() {
-  return db.query(`SELECT * FROM posts ORDER BY "createdAt" DESC LIMIT 20;`)
+  return db.query(`SELECT  posts.*,users.username,users.image,
+    (SELECT JSON_AGG(JSON_BUILD_OBJECT('id' ,h.id,'hashtag',h.name ) 
+        )FROM hashtags h
+    JOIN posts_hashtags ph ON h.id = ph."hashtagId"
+    WHERE ph."postId" = posts.id
+    ) as hashtags,
+        (
+        SELECT COUNT(likes."postId") 
+        FROM likes 
+            WHERE likes."postId" = posts.id
+    ) as "likesCount",
+    (SELECT JSON_AGG(JSON_BUILD_OBJECT('id', users.id, 'name', users.username)) 
+        FROM likes
+        JOIN users ON users.id = likes."likerId"
+        WHERE likes."postId" = posts.id
+    ) as likers
+    FROM posts_hashtags
+            JOIN posts ON posts.id = posts_hashtags."postId"
+            JOIN users ON users.id = posts."userId"
+    GROUP BY posts.id, users.username, users.image
+    ORDER BY posts."createdAt" DESC 
+    LIMIT 20;`)
 }
 
 export function getUserPostById(postId) {
