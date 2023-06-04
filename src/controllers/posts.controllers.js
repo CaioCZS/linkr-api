@@ -86,8 +86,10 @@ export async function getPostsByHashtag(req, res) {
 
   try {
     const { rows: result } = await dbGetPostsByHashtag(hashtag)
-    if (result.length === 0)
-      res.status(404).send({ message: "Esta hashtag não existe" })
+    if (result.length === 0) {
+      return res.status(404).send({ message: "Esta hashtag não existe" })
+    }
+
     res.send(result)
   } catch (err) {
     res.status(500).send(err.message)
