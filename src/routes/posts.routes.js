@@ -4,6 +4,7 @@ import { createPostSchema, updatePostSchema } from "../schemas/posts.schemas.js"
 import {
   checkExistingPost,
   checkIfUrlIsAvailable,
+  getPostPreview,
 } from "../middlewares/posts.middlewares.js"
 import {
   createPost,
@@ -29,6 +30,7 @@ postsRouter.post(
   validateRequestBody(createPostSchema),
   checkIfUrlIsAvailable,
   checkExistingUser,
+  getPostPreview,
   createPost
 )
 postsRouter.put(
