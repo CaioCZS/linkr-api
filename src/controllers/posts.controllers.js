@@ -7,7 +7,6 @@ import {
   getPostByPostUrlAndUserId,
   updateUserPostDB,
 } from "../repository/posts.repositories.js"
-import urlMetadata from "url-metadata"
 
 export async function createPost(req, res) {
   const { id } = req.params
