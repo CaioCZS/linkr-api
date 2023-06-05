@@ -43,7 +43,7 @@ export async function checkExistingPostForUpdate(req, res, next) {
   }
 }
 
-export async function getPostPreview (req, res){
+export async function getPostPreview (req, res, next){
   const {postUrl} = req.body;
 
   try {
