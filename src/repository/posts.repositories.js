@@ -1,9 +1,9 @@
 import db from "../database/db.connection.js"
 
-export function createPostDB(description, postUrl, userId) {
+export function createPostDB(description, postUrl, userId, titlePreview, imagePreview, descriptionPreview) {
   return db.query(
-    `INSERT INTO posts ("description", "postUrl", "userId") VALUES ($1, $2, $3);`,
-    [description, postUrl, userId]
+    `INSERT INTO posts ("description", "postUrl", "userId", "titlePreview", "imagePreview", "descriptionPreview") VALUES ($1, $2, $3, $4, $5, $6);`,
+    [description, postUrl, userId, titlePreview, imagePreview, descriptionPreview]
   )
 }
 

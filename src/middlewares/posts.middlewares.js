@@ -43,5 +43,21 @@ export async function checkExistingPostForUpdate(req, res, next) {
   }
 }
 
+export async function getPostPreview (req, res){
+  const {postUrl} = req.body;
+
+  try {
+    const response = await fetch(`https://jsonlink.io/api/extract?url=${postUrl}`);
+
+    if (response.ok) {
+      const data = await response.json();
+      res.locals.preview = data;
+      next();
+    } 
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
+}
+
 
 

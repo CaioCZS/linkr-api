@@ -11,9 +11,14 @@ import {
 export async function createPost(req, res) {
   const { id } = req.params
   const { description, postUrl } = req.body
+  const {data} = res.locals;
+  const {title, images } = data
+  const titlePreview = title;
+  const imagePreview = images[0];
+  const descriptionPreview = data.description;
 
   try {
-    await createPostDB(description, postUrl, id)
+    await createPostDB(description, postUrl, id, titlePreview, imagePreview, descriptionPreview)
     const post = await getPostByPostUrlAndUserId(postUrl, id)
     const result = {
       id: post.rows[0].id,
