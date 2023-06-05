@@ -10,6 +10,7 @@ import {
   deleteSession,
   getSessionByToken,
 } from "../repository/session.repository.js";
+import { getPostsById } from "../repository/posts.repositories.js";
 
 const key = process.env.JWT_SECRET || "super_secret_key";
 
@@ -103,9 +104,9 @@ export async function getUserByParams(req, res) {
       return res.status(401).send({ error: "Invalid token" });
     }
 
-    const user = await getUserById(id);
+    const posts = await getPostsById(id);
 
-    return res.status(200).send(user.rows[0]);
+    return res.status(200).send(posts.rows);
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Internal server error" });
