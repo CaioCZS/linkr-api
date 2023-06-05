@@ -33,6 +33,7 @@ postsRouter.post(
 )
 postsRouter.put(
   "/posts/:id",
+  checkExistingPost,
   checkExistingUser,
   checkIfUserIsPostsOwner,
   validateRequestBody(updatePostSchema),
