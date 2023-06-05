@@ -6,6 +6,7 @@ import {
   getAllUsersPostsDB,
   getPostByPostUrlAndUserId,
   updateUserPostDB,
+  deletePost
 } from "../repository/posts.repositories.js"
 
 export async function createPost(req, res) {
