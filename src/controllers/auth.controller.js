@@ -105,8 +105,9 @@ export async function getUserByParams(req, res) {
     }
 
     const posts = await getPostsById(id);
+    const user = await getUserById(id)
 
-    return res.status(200).send(posts.rows);
+    return res.status(200).send({ posts: posts.rows, user: user.rows[0]});
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Internal server error" });
