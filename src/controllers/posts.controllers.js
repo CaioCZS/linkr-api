@@ -11,8 +11,8 @@ import {
 export async function createPost(req, res) {
   const { id } = req.params
   const { description, postUrl } = req.body
+
   const {preview} = res.locals;
-  
   const {title, images } = preview
   const titlePreview = title;
   const imagePreview = images[0];
