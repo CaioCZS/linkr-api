@@ -12,10 +12,10 @@ export async function createPost(req, res) {
   const { id } = req.params
   const { description, postUrl } = req.body
   const {data} = res.locals;
-  const {title, images } = data
+  const {title, images } = preview
   const titlePreview = title;
   const imagePreview = images[0];
-  const descriptionPreview = data.description;
+  const descriptionPreview = preview.description;
 
   try {
     await createPostDB(description, postUrl, id, titlePreview, imagePreview, descriptionPreview)
