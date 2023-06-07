@@ -9,10 +9,8 @@ import {
 import {
   createPost,
   deleteUserPost,
-  dislikePost,
   getAllUsersPosts,
   getPostsByHashtag,
-  likePost,
   updateUserPost,
 } from "../controllers/posts.controllers.js"
 import { authMiddleware } from "../middlewares/auth.middleware.js"
@@ -48,8 +46,6 @@ postsRouter.delete(
   checkIfUserIsPostsOwner,
   deleteUserPost
 )
-postsRouter.post("/posts/:id/like", checkExistingPost, likePost)
-postsRouter.post("/posts/:id/dislike", checkExistingPost, dislikePost)
 postsRouter.get("/posts/hashtag/:hashtag", getPostsByHashtag)
 
 export default postsRouter
