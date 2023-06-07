@@ -4,7 +4,7 @@ import {
   dbPostFollow,
 } from "../repository/follow.repository.js";
 
-export async function getFollow(req, res) {
+export async function postGetFollow(req, res) {
   const { id, userId } = req.body;
   try {
     const { rows: result } = await dbGetFollow(id, userId);
