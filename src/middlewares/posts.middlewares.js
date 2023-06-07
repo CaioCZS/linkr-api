@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { getUserPostById } from "../repository/posts.repositories.js";
+import fetch from "node-fetch"
+import { getUserPostById } from "../repository/posts.repositories.js"
 export async function checkIfUrlIsAvailable(req, res, next) {
   const { postUrl } = req.body
 
@@ -32,32 +32,31 @@ export async function checkExistingPost(req, res, next) {
 }
 
 export async function checkExistingPostForUpdate(req, res, next) {
-  const { postId } = req.params;
-  try{
-    const post = await getUserPostById (postId);
-    if (post.rowCount === 0) return res.status(404).send("Post not found!");
-    res.locals.post = post;
-    next();
+  const { postId } = req.params
+  try {
+    const post = await getUserPostById(postId)
+    if (post.rowCount === 0) return res.status(404).send("Post not found!")
+    res.locals.post = post
+    next()
   } catch (err) {
     return res.status(500).send(err.message)
   }
 }
 
-export async function getPostPreview (req, res, next){
-  const {postUrl} = req.body;
+export async function getPostPreview(req, res, next) {
+  const { postUrl } = req.body
 
   try {
-    const response = await fetch(`https://jsonlink.io/api/extract?url=${postUrl}`);
+    const response = await fetch(
+      `https://jsonlink.io/api/extract?url=${postUrl}`
+    )
 
     if (response.ok) {
-      const data = await response.json();
-      res.locals.preview = data;
-      next();
-    } 
+      const data = await response.json()
+      res.locals.preview = data
+      next()
+    }
   } catch (err) {
     return res.status(500).send(err.message)
   }
 }
-
-
-
