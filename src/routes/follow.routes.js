@@ -9,6 +9,6 @@ const followRouter = Router();
 
 followRouter.post("/follow/get", postGetFollow);
 followRouter.post("/follow/post", postFollow);
-followRouter.delete("/follow", deleteFollow);
+followRouter.delete("/follow/delete", deleteFollow);
 
 export default followRouter;
