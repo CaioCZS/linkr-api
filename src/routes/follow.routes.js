@@ -1,14 +1,14 @@
 import { Router } from "express";
 import {
   deleteFollow,
-  getFollow,
   postFollow,
+  postGetFollow,
 } from "../controllers/follow.controller.js";
 
 const followRouter = Router();
 
-followRouter.get("/follow", getFollow);
-followRouter.post("/follow", postFollow);
+followRouter.post("/follow/get", postGetFollow);
+followRouter.post("/follow/post", postFollow);
 followRouter.delete("/follow", deleteFollow);
 
 export default followRouter;
