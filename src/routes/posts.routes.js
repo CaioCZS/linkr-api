@@ -21,10 +21,9 @@ import {
 
 const postsRouter = Router()
 
-postsRouter.use(authMiddleware)
-
 postsRouter.post(
   "/users/:id/posts",
+  authMiddleware,
   validateRequestBody(createPostSchema),
   checkIfUrlIsAvailable,
   checkExistingUser,
@@ -33,6 +32,7 @@ postsRouter.post(
 )
 postsRouter.put(
   "/posts/:id",
+  authMiddleware,
   checkExistingPost,
   checkExistingUser,
   checkIfUserIsPostsOwner,
@@ -42,6 +42,7 @@ postsRouter.put(
 postsRouter.get("/posts", getAllUsersPosts)
 postsRouter.delete(
   "/posts/:id",
+  authMiddleware,
   checkExistingPost,
   checkIfUserIsPostsOwner,
   deleteUserPost
