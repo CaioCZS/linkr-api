@@ -39,6 +39,8 @@ export function getAllUsersPostsDB(userId) {
                 JOIN posts_hashtags ph ON h.id = ph."hashtagId"
        WHERE ph."postId" = p.id) AS hashtags,
        (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likesCount",
+       COUNT(DISTINCT r.id) AS "repostsCount",
+      EXISTS (SELECT 1 FROM shares s WHERE s."postId" = p.id) AS "isRepost",
       (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
       FROM likes l
                 JOIN users u ON u.id = l."likerId"
@@ -52,8 +54,13 @@ export function getAllUsersPostsDB(userId) {
            LEFT JOIN likes l ON l."postId" = p.id
            JOIN followers f ON f."followingId" = p."userId"
            LEFT JOIN comments c ON c."postId" = p.id
-    WHERE f."followerId" = $1
-    GROUP BY p.id, u.username, u.image
+           LEFT JOIN shares r ON r."postId" = p.id
+    WHERE (p."userId" = $1 OR p."userId" IN (
+            SELECT f."followingId"
+            FROM followers f
+            WHERE f."followerId" = $1
+          ))
+    GROUP BY p.id, u.username, u.image, "isRepost"
     ORDER BY p.id DESC
     LIMIT 10;`,
     [userId]
@@ -151,4 +158,12 @@ GROUP BY p.id, u.username, u.image`,
 
 export function dbGetFollowersPost(id) {
   return db.query(`SELECT * FROM followers WHERE "followerId" = $1;`, [id])
+}
+
+export function createRepost(postId, userSharingId) {
+  return db.query(
+    `INSERT INTO shares ("postId", "userSharingId")
+    VALUES ($1, $2);`,
+    [postId, userSharingId]
+    )
 }
