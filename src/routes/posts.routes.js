@@ -11,6 +11,7 @@ import {
   deleteUserPost,
   getAllUsersPosts,
   getPostsByHashtag,
+  repostCreation,
   updateUserPost,
 } from "../controllers/posts.controllers.js"
 import { authMiddleware } from "../middlewares/auth.middleware.js"
@@ -39,6 +40,7 @@ postsRouter.put(
   validateRequestBody(updatePostSchema),
   updateUserPost
 )
+postsRouter.post('/repost/:id', authMiddleware, repostCreation)
 postsRouter.get("/posts", authMiddleware, getAllUsersPosts)
 postsRouter.delete(
   "/posts/:id",

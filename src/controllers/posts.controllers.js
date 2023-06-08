@@ -6,6 +6,7 @@ import {
   updateUserPostDB,
   deletePost,
   dbGetFollowersPost,
+  createRepost,
 } from "../repository/posts.repositories.js"
 
 export async function createPost(req, res) {
@@ -95,4 +96,20 @@ export async function getPostsByHashtag(req, res) {
   } catch (err) {
     res.status(500).send(err.message)
   }
+}
+
+export async function repostCreation(req, res) {
+  const { id } = req.params;
+  const postId = id;
+  const { session } = res.locals
+  const { userId } = session
+  const userSharingId = userId
+  try {
+
+    const repost = createRepost(postId, userSharingId)
+    res.status(201).send(repost)
+  } catch (err) {
+    res.status(500).send(err.message)
+}
+ 
 }
