@@ -5,6 +5,7 @@ import {
   getPostByPostUrlAndUserId,
   updateUserPostDB,
   deletePost,
+  dbGetFollowersPost,
 } from "../repository/posts.repositories.js"
 
 export async function createPost(req, res) {
@@ -39,9 +40,20 @@ export async function createPost(req, res) {
 }
 
 export async function getAllUsersPosts(req, res) {
+  const { session } = res.locals
+  const { userId } = session
   try {
-    const posts = await getAllUsersPostsDB()
-    return res.send(posts.rows)
+    const { rows: followingExist } = await dbGetFollowersPost(userId)
+    if (followingExist.length === 0) {
+      return res
+        .status(404)
+        .send("You don't follow anyone yet. Search for new friends!")
+    }
+    const { rows: posts } = await getAllUsersPostsDB(userId)
+    if (posts.length === 0) {
+      return res.status(404).send("No posts found from your friends")
+    }
+    return res.send(posts)
   } catch (err) {
     return res.status(500).send(err.message)
   }

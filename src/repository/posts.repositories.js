@@ -28,26 +28,31 @@ export function getPostByPostUrlAndUserId(postUrl, userId) {
   )
 }
 
-export function getAllUsersPostsDB() {
-  return db.query(`SELECT 
-    p.*, u.username, u.image,
-    (SELECT json_agg(json_build_object('id', h.id, 'hashtag', h.name))
-    FROM hashtags h
-    JOIN posts_hashtags ph ON h.id = ph."hashtagId"
-    WHERE ph."postId" = p.id
-    ) AS hashtags,
-    COUNT(l."postId") AS "likesCount",
-    (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
-    FROM likes l
-    JOIN users u ON u.id = l."likerId"
-    WHERE l."postId" = p.id
-    ) AS likers
-  FROM posts p
-  JOIN users u ON u.id = p."userId"
-  LEFT JOIN likes l ON l."postId" = p.id
-  GROUP BY p.id, u.username, u.image
-  ORDER BY p.id DESC 
-  LIMIT 20;`)
+export function getAllUsersPostsDB(userId) {
+  return db.query(
+    `SELECT
+  p.*,
+  u.username,
+  u.image,
+  (SELECT json_agg(json_build_object('id', h.id, 'hashtag', h.name))
+   FROM hashtags h
+            JOIN posts_hashtags ph ON h.id = ph."hashtagId"
+   WHERE ph."postId" = p.id) AS hashtags,
+  COUNT(l."postId") AS "likesCount",
+  (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
+   FROM likes l
+            JOIN users u ON u.id = l."likerId"
+   WHERE l."postId" = p.id) AS likers
+FROM posts p
+       JOIN users u ON u.id = p."userId"
+       LEFT JOIN likes l ON l."postId" = p.id
+       JOIN followers f ON f."followingId" = p."userId"
+WHERE f."followerId" = $1
+GROUP BY p.id, u.username, u.image
+ORDER BY p.id DESC
+LIMIT 10;`,
+    [userId]
+  )
 }
 
 export function getUserPostById(postId) {
@@ -137,4 +142,8 @@ LEFT JOIN likes l ON l."postId" = p.id WHERE P."userId" = $1
 GROUP BY p.id, u.username, u.image`,
     [id]
   )
+}
+
+export function dbGetFollowersPost(id) {
+  return db.query(`SELECT * FROM followers WHERE "followerId" = $1;`, [id])
 }
