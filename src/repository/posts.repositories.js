@@ -38,12 +38,12 @@ export function getAllUsersPostsDB(userId) {
        FROM hashtags h
                 JOIN posts_hashtags ph ON h.id = ph."hashtagId"
        WHERE ph."postId" = p.id) AS hashtags,
-      COUNT(l."postId") AS "likesCount",
+       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likesCount",
       (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
       FROM likes l
                 JOIN users u ON u.id = l."likerId"
       WHERE l."postId" = p.id) AS likers,
-      COUNT(c."postId") AS "commentsCount",
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
       (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', c."userId"))
        FROM comments c
        WHERE c."postId" = p.id) AS comments
