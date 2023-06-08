@@ -39,7 +39,7 @@ postsRouter.put(
   validateRequestBody(updatePostSchema),
   updateUserPost
 )
-postsRouter.get("/posts", getAllUsersPosts)
+postsRouter.get("/posts", authMiddleware, getAllUsersPosts)
 postsRouter.delete(
   "/posts/:id",
   authMiddleware,

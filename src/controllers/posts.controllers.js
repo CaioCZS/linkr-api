@@ -39,8 +39,10 @@ export async function createPost(req, res) {
 }
 
 export async function getAllUsersPosts(req, res) {
+  const { session } = res.locals
+  const { userId } = session
   try {
-    const posts = await getAllUsersPostsDB()
+    const posts = await getAllUsersPostsDB(userId)
     return res.send(posts.rows)
   } catch (err) {
     return res.status(500).send(err.message)
