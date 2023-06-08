@@ -143,3 +143,7 @@ GROUP BY p.id, u.username, u.image`,
     [id]
   )
 }
+
+export function dbGetFollowersPost(id) {
+  return db.query(`SELECT * FROM followers WHERE "followerId" = $1;`, [id])
+}
