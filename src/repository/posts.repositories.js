@@ -38,17 +38,21 @@ export function getAllUsersPostsDB(userId) {
        FROM hashtags h
                 JOIN posts_hashtags ph ON h.id = ph."hashtagId"
        WHERE ph."postId" = p.id) AS hashtags,
-      COUNT(DISTINCT l.id) AS "likesCount",
-      COUNT(DISTINCT c.id) AS "commentsCount",
-      COUNT(DISTINCT r.id) AS "repostsCount",
+       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likesCount",
+       COUNT(DISTINCT r.id) AS "repostsCount",
       EXISTS (SELECT 1 FROM shares s WHERE s."postId" = p.id) AS "isRepost",
       (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
-       FROM likes l
+      FROM likes l
                 JOIN users u ON u.id = l."likerId"
-       WHERE l."postId" = p.id) AS likers
+      WHERE l."postId" = p.id) AS likers,
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
+      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', c."userId"))
+       FROM comments c
+       WHERE c."postId" = p.id) AS comments
     FROM posts p
            JOIN users u ON u.id = p."userId"
            LEFT JOIN likes l ON l."postId" = p.id
+           JOIN followers f ON f."followingId" = p."userId"
            LEFT JOIN comments c ON c."postId" = p.id
            LEFT JOIN shares r ON r."postId" = p.id
     WHERE (p."userId" = $1 OR p."userId" IN (
@@ -60,10 +64,8 @@ export function getAllUsersPostsDB(userId) {
     ORDER BY p.id DESC
     LIMIT 10;`,
     [userId]
-  );  
-}
-
-
+  )
+} 
 
 export function getUserPostById(postId) {
   return db.query(`SELECT * FROM posts WHERE id=$1;`, [postId])
