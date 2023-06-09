@@ -1,4 +1,8 @@
 import {
+  dbAddHashtagTable,
+  dbGetAllHashtags,
+} from "../repository/hashtags.repository.js"
+import {
   createPostDB,
   dbGetPostsByHashtag,
   getAllUsersPostsDB,
@@ -21,9 +25,17 @@ export async function createPost(req, res) {
   const imagePreview = images[0]
   const descriptionPreview = preview.description
 
+  const nwDescription = description.split("#")
+  const allHashtags = []
+  for (let i = 1; i < nwDescription.length; i++) {
+    allHashtags.push(nwDescription[i])
+  }
+
   try {
+    const { rows: hashtags } = await dbGetAllHashtags()
+    await dbAddHashtagTable(allHashtags, hashtags)
     await createPostDB(
-      description,
+      nwDescription[0],
       postUrl,
       id,
       titlePreview,
@@ -46,7 +58,7 @@ export async function getAllUsersPosts(req, res) {
   const { page = 1, limit = 10 } = req.query
   const { session } = res.locals
   const { userId } = session
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * limit
   console.log(limit)
   console.log(page)
   try {
