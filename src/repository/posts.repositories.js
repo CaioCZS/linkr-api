@@ -28,7 +28,7 @@ export function getPostByPostUrlAndUserId(postUrl, userId) {
   );
 }
 
-export function getAllUsersPostsDB(userId) {
+export function getAllUsersPostsDB(userId, limit, offset) {
   return db.query(
     `
     SELECT
@@ -64,10 +64,11 @@ WHERE (p."userId" = $1 OR p."userId" IN (
       ))
 GROUP BY p.id, u.username, u.image, "isRepost"
 ORDER BY p.id DESC
-LIMIT 10;
+LIMIT $2
+OFFSET $3;
 
 `,
-    [userId]
+    [userId, limit, offset]
   );
 }
 
