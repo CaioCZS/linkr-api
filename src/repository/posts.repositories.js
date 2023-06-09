@@ -122,6 +122,7 @@ export function dbGetPostsByHashtag(hashtag) {
         JOIN users u ON u.id = l."likerId"
         WHERE l."postId" = p.id
       ) AS likers,
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
       (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'userId', c."userId"))
         FROM comments c
         WHERE c."postId" = p.id
@@ -156,6 +157,7 @@ export function getPostsById(id) {
         JOIN users u ON u.id = l."likerId"
         WHERE l."postId" = p.id
       ) AS likers,
+      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
       (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'userId', c."userId"))
         FROM comments c
         WHERE c."postId" = p.id
