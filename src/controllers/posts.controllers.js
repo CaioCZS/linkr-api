@@ -43,8 +43,12 @@ export async function createPost(req, res) {
 }
 
 export async function getAllUsersPosts(req, res) {
+  const { page = 1, limit = 10 } = req.query
   const { session } = res.locals
   const { userId } = session
+  const offset = (page - 1) * limit;
+  console.log(limit)
+  console.log(page)
   try {
     const { rows: followingExist } = await dbGetFollowersPost(userId)
     if (followingExist.length === 0) {
@@ -52,7 +56,7 @@ export async function getAllUsersPosts(req, res) {
         .status(404)
         .send("You don't follow anyone yet. Search for new friends!")
     }
-    const { rows: posts } = await getAllUsersPostsDB(userId)
+    const { rows: posts } = await getAllUsersPostsDB(userId, limit, offset)
     if (posts.length === 0) {
       return res.status(404).send("No posts found from your friends")
     }
