@@ -30,40 +30,43 @@ export function getPostByPostUrlAndUserId(postUrl, userId) {
 
 export function getAllUsersPostsDB(userId) {
   return db.query(
-    `SELECT
-      p.*,
-      u.username,
-      u.image,
-      (SELECT json_agg(json_build_object('id', h.id, 'hashtag', h.name))
-       FROM hashtags h
-                JOIN posts_hashtags ph ON h.id = ph."hashtagId"
-       WHERE ph."postId" = p.id) AS hashtags,
-       (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likesCount",
-       COUNT(DISTINCT r.id) AS "repostsCount",
-      EXISTS (SELECT 1 FROM shares s WHERE s."postId" = p.id) AS "isRepost",
-      (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
-      FROM likes l
-                JOIN users u ON u.id = l."likerId"
-      WHERE l."postId" = p.id) AS likers,
-      (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
-      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username, 'commentedUserImage', u.image))
-       FROM comments c
-                JOIN users u ON u.id = c."userId"
-       WHERE c."postId" = p.id) AS comments
-    FROM posts p
-           JOIN users u ON u.id = p."userId"
-           LEFT JOIN likes l ON l."postId" = p.id
-           JOIN followers f ON f."followingId" = p."userId"
-           LEFT JOIN comments c ON c."postId" = p.id
-           LEFT JOIN shares r ON r."postId" = p.id
-    WHERE (p."userId" = $1 OR p."userId" IN (
-            SELECT f."followingId"
-            FROM followers f
-            WHERE f."followerId" = $1
-          ))
-    GROUP BY p.id, u.username, u.image, "isRepost"
-    ORDER BY p.id DESC
-    LIMIT 10;`,
+    `
+    SELECT
+    p.*,
+    u.username,
+    u.image,
+    (SELECT json_agg(json_build_object('id', h.id, 'hashtag', h.name))
+     FROM hashtags h
+              JOIN posts_hashtags ph ON h.id = ph."hashtagId"
+     WHERE ph."postId" = p.id) AS hashtags,
+    (SELECT COUNT(*) FROM likes l WHERE l."postId" = p.id) AS "likesCount",
+    COUNT(DISTINCT r.id) AS "repostsCount",
+    EXISTS (SELECT 1 FROM shares s WHERE s."postId" = p.id) AS "isRepost",
+    (SELECT json_agg(json_build_object('id', u.id, 'name', u.username))
+    FROM likes l
+              JOIN users u ON u.id = l."likerId"
+    WHERE l."postId" = p.id) AS likers,
+    (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
+    (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username, 'commentedUserImage', u.image, 'postOwner', (c."userId" = p."userId"), 'followPostOwner', EXISTS (SELECT 1 FROM followers f2 WHERE f2."followerId" = c."userId" AND f2."followingId" = p."userId")))
+     FROM comments c
+              JOIN users u ON u.id = c."userId"
+     WHERE c."postId" = p.id) AS comments
+FROM posts p
+       JOIN users u ON u.id = p."userId"
+       LEFT JOIN likes l ON l."postId" = p.id
+       JOIN followers f ON f."followingId" = p."userId"
+       LEFT JOIN comments c ON c."postId" = p.id
+       LEFT JOIN shares r ON r."postId" = p.id
+WHERE (p."userId" = $1 OR p."userId" IN (
+        SELECT f."followingId"
+        FROM followers f
+        WHERE f."followerId" = $1
+      ))
+GROUP BY p.id, u.username, u.image, "isRepost"
+ORDER BY p.id DESC
+LIMIT 10;
+
+`,
     [userId]
   );
 }
