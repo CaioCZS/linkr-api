@@ -123,10 +123,10 @@ export function dbGetPostsByHashtag(hashtag) {
         WHERE l."postId" = p.id
       ) AS likers,
       (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
-      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'userId', c."userId"))
-        FROM comments c
-        WHERE c."postId" = p.id
-      ) AS comments
+      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username, 'commentedUserImage', u.image, 'postOwner', (c."userId" = p."userId"), 'followPostOwner', EXISTS (SELECT 1 FROM followers f2 WHERE f2."followerId" = c."userId" AND f2."followingId" = p."userId")))
+    FROM comments c
+            JOIN users u ON u.id = c."userId"
+    WHERE c."postId" = p.id) AS comments
     FROM posts p
     JOIN users u ON u.id = p."userId"
     LEFT JOIN likes l ON l."postId" = p.id
@@ -158,10 +158,10 @@ export function getPostsById(id) {
         WHERE l."postId" = p.id
       ) AS likers,
       (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
-      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'userId', c."userId"))
-        FROM comments c
-        WHERE c."postId" = p.id
-      ) AS comments
+      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username, 'commentedUserImage', u.image, 'postOwner', (c."userId" = p."userId"), 'followPostOwner', EXISTS (SELECT 1 FROM followers f2 WHERE f2."followerId" = c."userId" AND f2."followingId" = p."userId")))
+    FROM comments c
+            JOIN users u ON u.id = c."userId"
+    WHERE c."postId" = p.id) AS comments
     FROM posts p
     JOIN users u ON u.id = p."userId"
     LEFT JOIN likes l ON l."postId" = p.id
