@@ -46,7 +46,7 @@ export function getAllUsersPostsDB(userId) {
                 JOIN users u ON u.id = l."likerId"
       WHERE l."postId" = p.id) AS likers,
       (SELECT COUNT(*) FROM comments c WHERE c."postId" = p.id) AS "commentsCount",
-      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username))
+      (SELECT json_agg(json_build_object('id', c.id, 'comment', c.comment, 'commentedUser', u.username, 'commentedUserImage', u.image))
        FROM comments c
                 JOIN users u ON u.id = c."userId"
        WHERE c."postId" = p.id) AS comments
