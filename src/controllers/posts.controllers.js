@@ -8,6 +8,7 @@ import {
   dbGetFollowersPost,
   createRepost,
   createCommentDB,
+  dbVerifyNewPosts,
 } from "../repository/posts.repositories.js"
 
 export async function createPost(req, res) {
@@ -100,22 +101,20 @@ export async function getPostsByHashtag(req, res) {
 }
 
 export async function repostCreation(req, res) {
-  const { id } = req.params;
-  const postId = id;
+  const { id } = req.params
+  const postId = id
   const { session } = res.locals
   const { userId } = session
   const userSharingId = userId
   try {
-
     const repost = createRepost(postId, userSharingId)
     return res.status(201).send(repost)
   } catch (err) {
     return res.status(500).send(err.message)
-}
- 
+  }
 }
 
-export async function createPostComment (req, res) {
+export async function createPostComment(req, res) {
   const { id } = req.params
   const { comment } = req.body
   const { session } = res.locals
@@ -125,5 +124,20 @@ export async function createPostComment (req, res) {
     return res.status(201).send("Comment created!")
   } catch (err) {
     return res.status(500).send(err.message)
+  }
+}
+
+export async function verifyNewPosts(req, res) {
+  const { id } = req.params
+  const { session } = res.locals
+  const { userId } = session
+  try {
+    const { rows: result } = await dbVerifyNewPosts(userId, id)
+    if (result.length === 0) {
+      return res.status(404).send("Sem novos posts")
+    }
+    res.send({ newPostsCount: result.length })
+  } catch (err) {
+    res.status(500).send(err.message)
   }
 }
