@@ -8,6 +8,7 @@ import {
 } from "../middlewares/posts.middlewares.js"
 import {
   createPost,
+  createPostComment,
   deleteUserPost,
   getAllUsersPosts,
   getPostsByHashtag,
@@ -49,6 +50,7 @@ postsRouter.delete(
   checkIfUserIsPostsOwner,
   deleteUserPost
 )
+postsRouter.post("/posts/:id/comment", authMiddleware, createPostComment)
 postsRouter.get("/posts/hashtag/:hashtag", getPostsByHashtag)
 
 export default postsRouter

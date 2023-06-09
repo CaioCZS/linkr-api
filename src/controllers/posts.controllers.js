@@ -7,6 +7,7 @@ import {
   deletePost,
   dbGetFollowersPost,
   createRepost,
+  createCommentDB,
 } from "../repository/posts.repositories.js"
 
 export async function createPost(req, res) {
@@ -69,7 +70,7 @@ export async function updateUserPost(req, res) {
     await updateUserPostDB(description, userId, id)
     return res.send("Post updated!")
   } catch (err) {
-    res.status(500).send(err.message)
+    return res.status(500).send(err.message)
   }
 }
 
@@ -77,9 +78,9 @@ export async function deleteUserPost(req, res) {
   const { id } = req.params
   try {
     await deletePost(id)
-    res.send("Post deleted!")
+    return res.send("Post deleted!")
   } catch (err) {
-    res.status(500).send(err.message)
+    return res.status(500).send(err.message)
   }
 }
 
@@ -92,9 +93,9 @@ export async function getPostsByHashtag(req, res) {
       return res.status(404).send({ message: "Esta hashtag não existe" })
     }
 
-    res.send(result)
+    return res.send(result)
   } catch (err) {
-    res.status(500).send(err.message)
+    return res.status(500).send(err.message)
   }
 }
 
@@ -107,9 +108,22 @@ export async function repostCreation(req, res) {
   try {
 
     const repost = createRepost(postId, userSharingId)
-    res.status(201).send(repost)
+    return res.status(201).send(repost)
   } catch (err) {
-    res.status(500).send(err.message)
+    return res.status(500).send(err.message)
 }
  
+}
+
+export async function createPostComment (req, res) {
+  const { id } = req.params
+  const { comment } = req.body
+  const { session } = res.locals
+  const { userId } = session
+  try {
+    await createCommentDB(id, comment, userId)
+    return res.status(201).send("Comment created!")
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
 }

@@ -168,3 +168,7 @@ export function createRepost(postId, userSharingId) {
     [postId, userSharingId]
     )
 }
+
+export function createCommentDB (postId, comment, userId) {
+  return db.query(`INSERT INTO comments ("postId", "comment", "userId") VALUES ($1, $2, $3);`, [postId, comment, userId])
+}
