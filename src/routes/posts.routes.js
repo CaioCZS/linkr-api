@@ -14,6 +14,7 @@ import {
   getPostsByHashtag,
   repostCreation,
   updateUserPost,
+  verifyNewPosts,
 } from "../controllers/posts.controllers.js"
 import { authMiddleware } from "../middlewares/auth.middleware.js"
 import {
@@ -41,7 +42,7 @@ postsRouter.put(
   validateRequestBody(updatePostSchema),
   updateUserPost
 )
-postsRouter.post('/repost/:id', authMiddleware, repostCreation)
+postsRouter.post("/repost/:id", authMiddleware, repostCreation)
 postsRouter.get("/posts", authMiddleware, getAllUsersPosts)
 postsRouter.delete(
   "/posts/:id",
@@ -52,5 +53,6 @@ postsRouter.delete(
 )
 postsRouter.post("/posts/:id/comment", authMiddleware, createPostComment)
 postsRouter.get("/posts/hashtag/:hashtag", getPostsByHashtag)
+postsRouter.get("/posts/newPosts/:id", authMiddleware, verifyNewPosts)
 
 export default postsRouter
